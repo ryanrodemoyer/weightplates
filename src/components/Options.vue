@@ -1,43 +1,35 @@
 <template>
-  <div class="container-fluid">
-    <div class="center">
-      <h1>Weight Plates</h1>
+  <div class="card">
+    <div class="card-header">
+      Available Plates (pairs)
+
+      <span class="float-right">
+        <button @click="toggle()">
+          {{ ui.showOptions ? "Hide" : "Show" }}
+        </button>
+      </span>
     </div>
 
-    <div class="row">
-      <div class="col-sm">
-        <Options />
-      </div>
-    </div>
-
-    <p>&nbsp;</p>
-
-    <Combinations />
-
-    <p>&nbsp;</p>
-
-    <div class="row">
-      <div class="col-sm">
-        <div class="card">
-          <div class="card-header">Debug</div>
-
-          <pre style="margin: 1em;">{{ $data }}</pre>
-        </div>
-      </div>
+    <div id="options" v-show="ui.showOptions">
+      <ul class="list-group list-group-flush">
+        <OptionRow
+          v-for="option in options"
+          :key="option.id"
+          v-bind:id="option.id"
+        />
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
-import Options from "@/components/Options.vue";
-import Combinations from "@/components/Combinations.vue";
+import OptionRow from "@/components/OptionRow.vue";
 import { mapState } from "vuex";
 
 export default {
   name: "WeightPlates",
   components: {
-    Options,
-    Combinations
+    OptionRow
   },
   props: {},
   data: function() {
