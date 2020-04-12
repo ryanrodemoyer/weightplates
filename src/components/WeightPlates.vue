@@ -76,6 +76,9 @@ export default {
     toggle: function() {
       this.ui.showOptions = !this.ui.showOptions;
     }
+  },
+  created: function() {
+    this.$store.dispatch("calculate");
   }
 };
 </script>
