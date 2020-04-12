@@ -19,12 +19,20 @@
 
           <div id="options" v-show="ui.showOptions">
             <ul class="list-group list-group-flush">
-              <OptionRow />
+              <OptionRow
+                v-for="option in options"
+                :key="option.id"
+                v-bind:id="option.id"
+              />
             </ul>
           </div>
         </div>
       </div>
     </div>
+
+    <p>&nbsp;</p>
+
+    <Combinations />
 
     <p>&nbsp;</p>
 
@@ -41,8 +49,16 @@
 </template>
 
 <script>
+import OptionRow from "@/components/OptionRow.vue";
+import Combinations from "@/components/Combinations.vue";
+import { mapState } from "vuex";
+
 export default {
   name: "WeightPlates",
+  components: {
+    OptionRow,
+    Combinations
+  },
   props: {
     msg: String
   },
@@ -50,12 +66,11 @@ export default {
     return {
       ui: {
         showOptions: true
-      },
-      options: {
-        forty_five: 3,
-        two_point_five: 2
       }
     };
+  },
+  computed: {
+    ...mapState(["options"])
   },
   methods: {
     toggle: function() {

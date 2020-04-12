@@ -54,9 +54,79 @@ for (let i = BAR + 5; i <= 405; i += 5) {
   console.log(`${i}: `, res);
 }
 
+const localState = {
+  options: [
+    {
+      id: 1,
+      weight: 45,
+      quantity: 1,
+      display: "45 lb"
+    },
+    {
+      id: 2,
+      weight: 35,
+      quantity: 1,
+      display: "35 lb"
+    },
+    {
+      id: 3,
+      weight: 25,
+      quantity: 1,
+      display: "25 lb"
+    },
+    {
+      id: 4,
+      weight: 15,
+      quantity: 1,
+      display: "15 lb"
+    },
+    {
+      id: 5,
+      weight: 10,
+      quantity: 1,
+      display: "10 lb"
+    },
+    {
+      id: 6,
+      weight: 5,
+      quantity: 1,
+      display: "5 lb"
+    },
+    {
+      id: 7,
+      weight: 2.5,
+      quantity: 1,
+      display: "2.5 lb"
+    }
+  ]
+};
+
+const localMutations = {
+  increment(state, args) {
+    state.options.find(x => x.id === args.id).quantity++;
+  },
+  decrement(state, args) {
+    state.options.find(x => x.id === args.id).quantity--;
+  }
+};
+
+const localActions = {
+  increment(context, args) {
+    context.commit("increment", args);
+  },
+  decrement(context, args) {
+    context.commit("decrement", args);
+  }
+};
+
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
-  actions: {},
+  state: localState,
+  getters: {
+    getOptionById: state => id => {
+      return state.options.find(x => x.id === id);
+    }
+  },
+  mutations: localMutations,
+  actions: localActions,
   modules: {}
 });
