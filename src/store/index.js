@@ -8,10 +8,6 @@ Vue.use(Vuex);
 const calculate = (inventory, barWeight, targetWeight) => {
   const results = {};
 
-  // // seed the results so less checking to do in the actual code
-  // inventory.forEach(p => {
-  // });
-
   let weight = parseInt(targetWeight) - barWeight;
 
   inventory.forEach(pair => {
@@ -20,22 +16,22 @@ const calculate = (inventory, barWeight, targetWeight) => {
     let canUse = false;
     do {
       canUse = pair.quantity >= 1 && weight - 2 * pair.weight >= 0;
-      // canUse = weight >= pair.quantity * 2 * pair.weight;
-      // console.log(`${canUse}: ${weight} - ${2 * pair.weight} >= 0`)
       if (canUse) {
         results[pair.weight] = results[pair.weight] + 1;
 
         pair.quantity--;
         weight -= pair.weight * 2;
-        // console.log(`remaining weight ${weight}`)
       }
     } while (canUse === true);
   });
 
-  return { weight: targetWeight, ...results };
+  return {
+    weight: targetWeight,
+    totalWeight: targetWeight - weight,
+    isSuccess: weight === 0,
+    ...results
+  };
 };
-
-const BAR = 45;
 
 // function pairs() {
 //   const PAIRS = [
@@ -59,10 +55,14 @@ const localState = {
 
 const localMutations = {
   increment(state, args) {
-    state.options.find(x => x.id === args.id).quantity++;
+    state.options.plates.find(x => x.id === args.id).quantity++;
   },
   decrement(state, args) {
-    state.options.find(x => x.id === args.id).quantity--;
+    state.options.plates.find(x => x.id === args.id).quantity--;
+  },
+  setBarWeight(state, args) {
+    Vue.set(state.options, "barWeight", args.barWeight);
+    // state.options.barWeight = args.barWeight;
   }
 };
 
@@ -76,13 +76,19 @@ const localActions = {
   },
   decrement(context, args) {
     context.commit("decrement", args);
+
+    context.store.dispatch("calculate");
+  },
+  setBarWeight(context, args) {
+    context.commit("setBarWeight", args);
+
     context.store.dispatch("calculate");
   },
   calculate(context) {
     context.state.calculatedResults = [];
 
-    for (let i = BAR + 5; i <= 405; i += 5) {
-      const pairs = context.state.options.map(x => ({
+    for (let i = 35; i <= 405; i += 5) {
+      const pairs = context.state.options.plates.map(x => ({
         weight: parseFloat(x.weight),
         quantity: parseInt(x.quantity)
       }));
@@ -91,7 +97,9 @@ const localActions = {
         context.state.availableWeights.push(i);
       }
 
-      const res = calculate(pairs, BAR, i);
+      console.log(`bar weight is ${context.state.options.barWeight}`);
+
+      const res = calculate(pairs, context.state.options.barWeight, i);
       context.state.calculatedResults.push(res);
     }
 
@@ -103,7 +111,7 @@ export default new Vuex.Store({
   state: localState,
   getters: {
     getOptionById: state => id => {
-      return state.options.find(x => x.id === id);
+      return state.options.plates.find(x => x.id === id);
     },
     getResultByWeight: state => weight => {
       return state.calculatedResults.find(x => x.weight === weight);

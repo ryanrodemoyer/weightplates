@@ -13,10 +13,46 @@
     <div id="options" v-show="ui.showOptions">
       <ul class="list-group list-group-flush">
         <OptionRow
-          v-for="option in options"
-          :key="option.id"
-          v-bind:id="option.id"
+          v-for="plate in options.plates"
+          :key="plate.id"
+          v-bind:id="plate.id"
         />
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-3" style="margin: auto;">
+              <strong>Bar</strong>
+            </div>
+            <div class="col-9">
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="barweight"
+                    value="45"
+                    v-model="ui.barWeight"
+                  />45
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="barweight"
+                    value="35"
+                    v-model="ui.barWeight"
+                  />35
+                </label>
+              </div>
+              <!--               
+              <select class="form-control">
+                <option selected>45</option>
+                <option>35</option>
+              </select> -->
+            </div>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -35,10 +71,17 @@ export default {
   data: function() {
     return {
       ui: {
-        showOptions: true
+        showOptions: true,
+        barWeight: 0
       }
     };
   },
+  // watch: {
+  //   "ui.barWeight": function(val) {
+  //     console.log(val);
+  //     this.$store.dispatch("setBarWeight", parseInt(val));
+  //   }
+  // },
   computed: {
     ...mapState(["options"])
   },
@@ -48,6 +91,7 @@ export default {
     }
   },
   created: function() {
+    this.ui.barWeight = this.options.barWeight;
     this.$store.dispatch("calculate");
   }
 };

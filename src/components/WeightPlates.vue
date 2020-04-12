@@ -12,7 +12,11 @@
 
     <p>&nbsp;</p>
 
-    <Combinations />
+    <div class="row">
+      <div class="col-sm">
+        <Combinations />
+      </div>
+    </div>
 
     <p>&nbsp;</p>
 
@@ -20,7 +24,6 @@
       <div class="col-sm">
         <div class="card">
           <div class="card-header">Debug</div>
-
           <pre style="margin: 1em;">{{ $data }}</pre>
         </div>
       </div>
@@ -54,10 +57,10 @@ export default {
     toggle: function() {
       this.ui.showOptions = !this.ui.showOptions;
     }
-  },
-  created: function() {
-    this.$store.dispatch("calculate");
   }
+  // created: function() {
+  //   this.$store.dispatch("calculate");
+  // }
 };
 </script>
 
