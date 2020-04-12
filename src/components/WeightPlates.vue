@@ -20,14 +20,14 @@
 
     <p>&nbsp;</p>
 
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-sm">
         <div class="card">
           <div class="card-header">Debug</div>
           <pre style="margin: 1em;">{{ $data }}</pre>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
