@@ -65,8 +65,6 @@ const localMutations = {
   }
 };
 
-let isFirstTime = true;
-
 const localActions = {
   increment(context, args) {
     context.commit("increment", args);
@@ -86,21 +84,24 @@ const localActions = {
   calculate(context) {
     context.state.calculatedResults = [];
 
+    const availableWeights = [];
+
     for (let i = 35; i <= 405; i += 5) {
       const pairs = context.state.options.plates.map(x => ({
         weight: parseFloat(x.weight),
         quantity: parseInt(x.quantity)
       }));
 
-      if (isFirstTime) {
-        context.state.availableWeights.push(i);
-      }
-
       const res = calculate(pairs, context.state.options.barWeight, i);
+      availableWeights.push({
+        weight: i,
+        isDisabled: res.isSuccess === false
+      });
+
       context.state.calculatedResults.push(res);
     }
 
-    isFirstTime = false;
+    Vue.set(context.state, "availableWeights", availableWeights);
   }
 };
 

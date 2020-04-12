@@ -7,10 +7,11 @@
       <select class="form-control" v-model="ui.targetWeight">
         <option
           v-for="weight in availableWeights"
-          :key="weight"
-          :selected="weight === 180"
+          :key="weight.weight"
+          :selected="weight.weight === 180"
+          :disabled="weight.isDisabled === true"
         >
-          {{ weight }}</option
+          {{ weight.weight }}</option
         >
       </select>
 
@@ -42,7 +43,7 @@
             <td>Total</td>
           </tr>
           <tr>
-            <td>Quantity</td>
+            <td>Quantity <small>(pairs)</small></td>
             <td v-bind:class="{ highlight: result['2.5'] !== 0 }">
               {{ result["2.5"] }}
             </td>
