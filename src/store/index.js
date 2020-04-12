@@ -62,7 +62,6 @@ const localMutations = {
   },
   setBarWeight(state, args) {
     Vue.set(state.options, "barWeight", args.barWeight);
-    // state.options.barWeight = args.barWeight;
   }
 };
 
@@ -77,12 +76,12 @@ const localActions = {
   decrement(context, args) {
     context.commit("decrement", args);
 
-    context.store.dispatch("calculate");
+    context.dispatch("calculate");
   },
   setBarWeight(context, args) {
     context.commit("setBarWeight", args);
 
-    context.store.dispatch("calculate");
+    context.dispatch("calculate");
   },
   calculate(context) {
     context.state.calculatedResults = [];
@@ -96,8 +95,6 @@ const localActions = {
       if (isFirstTime) {
         context.state.availableWeights.push(i);
       }
-
-      console.log(`bar weight is ${context.state.options.barWeight}`);
 
       const res = calculate(pairs, context.state.options.barWeight, i);
       context.state.calculatedResults.push(res);

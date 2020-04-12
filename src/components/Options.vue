@@ -76,12 +76,11 @@ export default {
       }
     };
   },
-  // watch: {
-  //   "ui.barWeight": function(val) {
-  //     console.log(val);
-  //     this.$store.dispatch("setBarWeight", parseInt(val));
-  //   }
-  // },
+  watch: {
+    "ui.barWeight": function(val) {
+      this.$store.dispatch("setBarWeight", { barWeight: parseInt(val) });
+    }
+  },
   computed: {
     ...mapState(["options"])
   },

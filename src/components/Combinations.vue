@@ -20,51 +20,54 @@
         style="color: red; font-weight: bold;"
         v-show="result['isSuccess'] === false"
       >
-        You are short {{ ui.targetWeight - result["totalWeight"] }}. You need
+        You are short
+        {{ parseInt(ui.targetWeight) - result["totalWeight"] }} lbs. You need
         more plates!
       </p>
       <p>
         <small>Results</small>
       </p>
 
-      <table class="table">
-        <tr>
-          <td>Plate</td>
-          <td v-bind:class="{ highlight: result['2.5'] !== 0 }">2.5</td>
-          <td v-bind:class="{ highlight: result['5'] !== 0 }">5</td>
-          <td v-bind:class="{ highlight: result['10'] !== 0 }">10</td>
-          <td v-bind:class="{ highlight: result['15'] !== 0 }">15</td>
-          <td v-bind:class="{ highlight: result['25'] !== 0 }">25</td>
-          <td v-bind:class="{ highlight: result['35'] !== 0 }">35</td>
-          <td v-bind:class="{ highlight: result['45'] !== 0 }">45</td>
-          <td>Total</td>
-        </tr>
-        <tr>
-          <td>Quantity</td>
-          <td v-bind:class="{ highlight: result['2.5'] !== 0 }">
-            {{ result["2.5"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['5'] !== 0 }">
-            {{ result["5"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['10'] !== 0 }">
-            {{ result["10"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['15'] !== 0 }">
-            {{ result["15"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['25'] !== 0 }">
-            {{ result["25"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['35'] !== 0 }">
-            {{ result["35"] }}
-          </td>
-          <td v-bind:class="{ highlight: result['45'] !== 0 }">
-            {{ result["45"] }}
-          </td>
-          <td>{{ result["totalWeight"] }}</td>
-        </tr>
-      </table>
+      <div class="table-responsive">
+        <table class="table">
+          <tr>
+            <td>Plate</td>
+            <td v-bind:class="{ highlight: result['2.5'] !== 0 }">2.5</td>
+            <td v-bind:class="{ highlight: result['5'] !== 0 }">5</td>
+            <td v-bind:class="{ highlight: result['10'] !== 0 }">10</td>
+            <td v-bind:class="{ highlight: result['15'] !== 0 }">15</td>
+            <td v-bind:class="{ highlight: result['25'] !== 0 }">25</td>
+            <td v-bind:class="{ highlight: result['35'] !== 0 }">35</td>
+            <td v-bind:class="{ highlight: result['45'] !== 0 }">45</td>
+            <td>Total</td>
+          </tr>
+          <tr>
+            <td>Quantity</td>
+            <td v-bind:class="{ highlight: result['2.5'] !== 0 }">
+              {{ result["2.5"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['5'] !== 0 }">
+              {{ result["5"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['10'] !== 0 }">
+              {{ result["10"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['15'] !== 0 }">
+              {{ result["15"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['25'] !== 0 }">
+              {{ result["25"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['35'] !== 0 }">
+              {{ result["35"] }}
+            </td>
+            <td v-bind:class="{ highlight: result['45'] !== 0 }">
+              {{ result["45"] }}
+            </td>
+            <td>{{ result["totalWeight"] }}</td>
+          </tr>
+        </table>
+      </div>
 
       <!-- <div class="card">
             <div class="card-header">Debug</div>
@@ -100,14 +103,7 @@ export default {
     }
   },
   getters: {},
-  methods: {
-    increment: function() {
-      console.log("inc");
-    },
-    decrement: function() {
-      console.log("dec");
-    }
-  }
+  methods: {}
 };
 </script>
 
