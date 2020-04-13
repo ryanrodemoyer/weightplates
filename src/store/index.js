@@ -6,24 +6,36 @@ import defaultOptions from "./defaultOptions.js";
 Vue.use(Vuex);
 
 const calculate = (inventory, barWeight, targetWeight) => {
-  const results = {};
+  let results;
 
   let weight = parseInt(targetWeight) - barWeight;
 
-  inventory.forEach(pair => {
-    results[pair.weight] = 0;
+  for (let i = inventory.length - 1; i >= 0; i--) {
+    results = {};
 
-    let canUse = false;
-    do {
-      canUse = pair.quantity >= 1 && weight - 2 * pair.weight >= 0;
-      if (canUse) {
-        results[pair.weight] = results[pair.weight] + 1;
+    inventory.forEach(pair => {
+      results[pair.weight] = 0;
+    });
 
-        pair.quantity--;
-        weight -= pair.weight * 2;
-      }
-    } while (canUse === true);
-  });
+    inventory.slice(0, i).forEach(pair => {
+      results[pair.weight] = 0;
+
+      let canUse = false;
+      do {
+        canUse = pair.quantity >= 1 && weight - 2 * pair.weight >= 0;
+        if (canUse) {
+          results[pair.weight] = results[pair.weight] + 1;
+
+          pair.quantity--;
+          weight -= pair.weight * 2;
+        }
+      } while (canUse === true);
+    });
+
+    if (weight === 0) {
+      break;
+    }
+  }
 
   return {
     weight: targetWeight,
@@ -32,20 +44,6 @@ const calculate = (inventory, barWeight, targetWeight) => {
     ...results
   };
 };
-
-// function pairs() {
-//   const PAIRS = [
-//     { weight: 45, quantity: 4 },
-//     { weight: 35, quantity: 1 },
-//     { weight: 25, quantity: 1 },
-//     { weight: 15, quantity: 1 },
-//     { weight: 10, quantity: 1 },
-//     { weight: 5, quantity: 1 },
-//     { weight: 2.5, quantity: 1 }
-//   ];
-
-//   return PAIRS;
-// }
 
 const localState = {
   options: defaultOptions,
