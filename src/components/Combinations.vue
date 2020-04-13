@@ -40,6 +40,12 @@
             <td v-bind:class="{ highlight: result['25'] !== 0 }">25</td>
             <td v-bind:class="{ highlight: result['35'] !== 0 }">35</td>
             <td v-bind:class="{ highlight: result['45'] !== 0 }">45</td>
+            <td
+              v-if="options.plates.find(x => x.weight === 55).quantity > 0"
+              v-bind:class="{ highlight: result['55'] !== 0 }"
+            >
+              55
+            </td>
             <td>Total</td>
           </tr>
           <tr>
@@ -64,6 +70,12 @@
             </td>
             <td v-bind:class="{ highlight: result['45'] !== 0 }">
               {{ result["45"] }}
+            </td>
+            <td
+              v-if="options.plates.find(x => x.weight === 55).quantity > 0"
+              v-bind:class="{ highlight: result['55'] !== 0 }"
+            >
+              {{ result["55"] }}
             </td>
             <td>{{ result["totalWeight"] }}</td>
           </tr>
@@ -95,7 +107,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["availableWeights", "calculatedResults"]),
+    ...mapState(["availableWeights", "calculatedResults", "options"]),
     ...mapGetters(["getResultByWeight"]),
     result: function() {
       return this.calculatedResults.find(
