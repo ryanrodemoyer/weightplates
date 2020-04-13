@@ -44,11 +44,7 @@ export default {
   },
   props: {},
   data: function() {
-    return {
-      ui: {
-        showOptions: true
-      }
-    };
+    return {};
   },
   computed: {
     ...mapState(["options"])

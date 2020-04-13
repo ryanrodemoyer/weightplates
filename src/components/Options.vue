@@ -71,7 +71,7 @@ export default {
   data: function() {
     return {
       ui: {
-        showOptions: true,
+        showOptions: false,
         barWeight: 0
       }
     };
