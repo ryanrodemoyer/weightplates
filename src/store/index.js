@@ -1,49 +1,10 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import calculate from "./calculate";
 import defaultOptions from "./defaultOptions.js";
 
 Vue.use(Vuex);
-
-const calculate = (inventory, barWeight, targetWeight) => {
-  let results;
-
-  let weight = parseInt(targetWeight) - barWeight;
-
-  for (let i = inventory.length - 1; i >= 0; i--) {
-    results = {};
-
-    inventory.forEach(pair => {
-      results[pair.weight] = 0;
-    });
-
-    inventory.slice(0, i).forEach(pair => {
-      results[pair.weight] = 0;
-
-      let canUse = false;
-      do {
-        canUse = pair.quantity >= 1 && weight - 2 * pair.weight >= 0;
-        if (canUse) {
-          results[pair.weight] = results[pair.weight] + 1;
-
-          pair.quantity--;
-          weight -= pair.weight * 2;
-        }
-      } while (canUse === true);
-    });
-
-    if (weight === 0) {
-      break;
-    }
-  }
-
-  return {
-    weight: targetWeight,
-    totalWeight: targetWeight - weight,
-    isSuccess: weight === 0,
-    ...results
-  };
-};
 
 const localState = {
   options: defaultOptions,
