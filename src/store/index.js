@@ -1,72 +1,111 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import calculate from "./calculate";
+// import calculate from "./calculate";
+import { powerSet, sums } from "./powerSet";
 import defaultOptions from "./defaultOptions.js";
 
 Vue.use(Vuex);
 
 const localState = {
   options: defaultOptions,
-  availableWeights: [],
-  calculatedResults: []
+  sums: []
 };
 
 const localMutations = {
+  setUnits(state, args) {
+    Vue.set(state.options, "units", args.units);
+  },
   increment(state, args) {
     state.options.plates.find(x => x.id === args.id).quantity++;
   },
   decrement(state, args) {
     state.options.plates.find(x => x.id === args.id).quantity--;
   },
-  setBarWeight(state, args) {
-    Vue.set(state.options, "barWeight", args.barWeight);
+  setBarWeightLbs(state, args) {
+    Vue.set(state.options, "barWeightLbs", args.barWeightLbs);
+  },
+  setBarWeightKilos(state, args) {
+    Vue.set(state.options, "barWeightKilos", args.barWeightKilos);
+  },
+  setSums(state, args) {
+    Vue.set(state, "sums", args.sums);
   }
 };
 
 const localActions = {
+  toggleUnits(context) {
+    let units = "";
+    if (context.state.options.units === "lbs") {
+      units = "kilos";
+    } else {
+      units = "lbs";
+    }
+
+    context.commit("setUnits", {
+      units: units
+    });
+
+    context.dispatch("buildSuperSet");
+  },
   increment(context, args) {
     context.commit("increment", args);
 
-    context.dispatch("calculate");
+    context.dispatch("buildSuperSet");
   },
   decrement(context, args) {
     context.commit("decrement", args);
 
-    context.dispatch("calculate");
+    context.dispatch("buildSuperSet");
   },
-  setBarWeight(context, args) {
-    context.commit("setBarWeight", args);
+  setBarWeightLbs(context, args) {
+    context.commit("setBarWeightLbs", args);
 
-    context.dispatch("calculate");
+    context.dispatch("buildSuperSet");
   },
-  calculate(context) {
-    context.state.calculatedResults = [];
+  setBarWeightKilos(context, args) {
+    context.commit("setBarWeightKilos", args);
 
-    const availableWeights = [];
-
-    for (let i = 35; i <= 405; i += 5) {
-      const pairs = context.state.options.plates.map(x => ({
-        weight: parseFloat(x.weight),
-        quantity: parseInt(x.quantity)
-      }));
-
-      const res = calculate(pairs, context.state.options.barWeight, i);
-      availableWeights.push({
-        weight: i,
-        isDisabled: res.isSuccess === false
+    context.dispatch("buildSuperSet");
+  },
+  buildSuperSet(context) {
+    const build = inventory => {
+      let set = [];
+      inventory.forEach(x => {
+        for (let i = 1; i <= x.quantity; i++) {
+          set.push(x.weight);
+        }
       });
+      return set;
+    };
 
-      context.state.calculatedResults.push(res);
-    }
+    const initial = context.state.options.plates.filter(
+      x => x.units === context.state.options.units
+    );
+    const list = build(initial);
+    const set = powerSet(list);
+    const sum = sums(
+      set,
+      context.state.options.units === "lbs"
+        ? context.state.options.barWeightLbs
+        : context.state.options.barWeightKilos
+    );
 
-    Vue.set(context.state, "availableWeights", availableWeights);
+    context.commit("setSums", {
+      sums: sum
+    });
   }
 };
 
 export default new Vuex.Store({
   state: localState,
   getters: {
+    dupes: state => {
+      return state.sums.filter(x => x.hash === "290.4738");
+    },
+    getPlatesForUnits: state => {
+      return state.options.plates.filter(x => x.units === state.options.units);
+    },
     getOptionById: state => id => {
       return state.options.plates.find(x => x.id === id);
     },

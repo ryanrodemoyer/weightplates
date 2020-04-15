@@ -1,29 +1,54 @@
 <template>
   <div class="card">
-    <div class="card-header">Results</div>
+    <div class="card-header">
+      Results
+      <button class="float-right" @click="toggleUnits()">
+        Show me {{ options.units === "lbs" ? "Kilos" : "Lbs" }}
+      </button>
+    </div>
     <div class="card-body">
-      <small>Choose the weight</small>
+      <div class="row">
+        <div class="col-6">
+          <small>Choose the weight</small>
 
-      <select class="form-control" v-model="ui.targetWeight">
-        <option
-          v-for="weight in availableWeights"
-          :key="weight.weight"
-          :selected="weight.weight === 180"
-          :disabled="weight.isDisabled === true"
-        >
-          {{ weight.weight }}</option
-        >
-      </select>
+          <select class="form-control" v-model="ui.targetWeight">
+            <option v-for="weight in ui.availableWeights" :key="weight.weight">
+              {{ weight.weight }}</option
+            >
+          </select>
+        </div>
+        <div class="col-3">
+          <small>every one unit</small>
+          <button
+            class="btn btn-block"
+            v-bind:class="{
+              'btn-success': ui.stepCount === 1,
+              'btn-outline-success': ui.stepCount !== 1
+            }"
+            @click="setStep(1)"
+          >
+            1
+          </button>
+        </div>
+        <div class="col-3">
+          <small>every five units</small>
+          <button
+            class="btn btn-block"
+            v-bind:class="{
+              'btn-success': ui.stepCount === 5,
+              'btn-outline-success': ui.stepCount !== 5
+            }"
+            @click="setStep(5)"
+          >
+            5
+          </button>
+        </div>
+      </div>
 
       <p>&nbsp;</p>
 
-      <p
-        style="color: red; font-weight: bold;"
-        v-show="result['isSuccess'] === false"
-      >
-        You are short
-        {{ parseInt(ui.targetWeight) - result["totalWeight"] }} lbs. You need
-        more plates!
+      <p style="color: red; font-weight: bold;" v-show="result.length === 0">
+        You need more plates!
       </p>
       <p>
         <small>Results</small>
@@ -33,51 +58,33 @@
         <table class="table">
           <tr>
             <td>Plate</td>
-            <td v-bind:class="{ highlight: result['2.5'] !== 0 }">2.5</td>
-            <td v-bind:class="{ highlight: result['5'] !== 0 }">5</td>
-            <td v-bind:class="{ highlight: result['10'] !== 0 }">10</td>
-            <td v-bind:class="{ highlight: result['15'] !== 0 }">15</td>
-            <td v-bind:class="{ highlight: result['25'] !== 0 }">25</td>
-            <td v-bind:class="{ highlight: result['35'] !== 0 }">35</td>
-            <td v-bind:class="{ highlight: result['45'] !== 0 }">45</td>
+
             <td
-              v-if="options.plates.find(x => x.weight === 55).quantity > 0"
-              v-bind:class="{ highlight: result['55'] !== 0 }"
+              v-for="plate in platesFiltered"
+              :key="plate.weight"
+              class="center"
             >
-              55
+              {{ plate.weight }}
             </td>
-            <td>Total</td>
+            <td class="center" v-if="ui.showHash">Hash</td>
+            <td class="center">Total</td>
           </tr>
-          <tr>
-            <td>Quantity <small>(pairs)</small></td>
-            <td v-bind:class="{ highlight: result['2.5'] !== 0 }">
-              {{ result["2.5"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['5'] !== 0 }">
-              {{ result["5"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['10'] !== 0 }">
-              {{ result["10"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['15'] !== 0 }">
-              {{ result["15"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['25'] !== 0 }">
-              {{ result["25"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['35'] !== 0 }">
-              {{ result["35"] }}
-            </td>
-            <td v-bind:class="{ highlight: result['45'] !== 0 }">
-              {{ result["45"] }}
+          <tr v-for="(res, id) in result" :key="id">
+            <td>
+              <span v-if="id === 0">Quantity <small>(pairs)</small></span>
             </td>
             <td
-              v-if="options.plates.find(x => x.weight === 55).quantity > 0"
-              v-bind:class="{ highlight: result['55'] !== 0 }"
+              v-for="plate in platesFiltered"
+              :key="plate.weight"
+              v-bind:class="{
+                highlight: res.items.find(r => r === plate.weight)
+              }"
+              class="center"
             >
-              {{ result["55"] }}
+              {{ res.items.filter(r => r === plate.weight).length }}
             </td>
-            <td>{{ result["totalWeight"] }}</td>
+            <td class="center" v-if="ui.showHash">{{ res["hash"] }}</td>
+            <td class="center">{{ res["sum"] }}</td>
           </tr>
         </table>
       </div>
@@ -103,25 +110,59 @@ export default {
   props: {},
   data: function() {
     return {
-      ui: { targetWeight: 225 }
+      ui: {
+        targetWeight: 145,
+        availableWeights: [],
+        showHash: false,
+        stepCount: 1
+      }
     };
   },
   computed: {
-    ...mapState(["availableWeights", "calculatedResults", "options"]),
-    ...mapGetters(["getResultByWeight"]),
+    ...mapState(["options", "sums"]),
+    ...mapGetters(["getResultByWeight", "getPlatesForUnits"]),
     result: function() {
-      return this.calculatedResults.find(
-        x => x.weight === parseInt(this.ui.targetWeight)
+      const res = this.sums.filter(
+        x => x.sum === parseInt(this.ui.targetWeight)
       );
+      return res === undefined ? { items: [], sum: 0 } : res;
+    },
+    platesFiltered: function() {
+      const res = this.getPlatesForUnits.filter(x => x.quantity >= 1);
+      return res === undefined ? {} : res;
     }
   },
   getters: {},
-  methods: {}
+  methods: {
+    toggleUnits() {
+      this.$store.dispatch("toggleUnits");
+    },
+    setStep(value) {
+      const step = value || this.ui.stepCount;
+
+      this.ui.stepCount = step;
+
+      this.ui.availableWeights = [];
+
+      for (let i = 15; i <= 675; i += step) {
+        this.ui.availableWeights.push({
+          weight: i
+        });
+      }
+    }
+  },
+  mounted() {
+    this.setStep(1);
+  }
 };
 </script>
 
 <style scoped lang="scss">
 .highlight {
   background-color: lavender;
+}
+
+.center {
+  text-align: center;
 }
 </style>
