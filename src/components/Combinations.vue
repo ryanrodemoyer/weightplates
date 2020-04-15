@@ -51,7 +51,7 @@
         style="color: purple; font-weight: bold;"
         v-if="ui.isMobile && result.length >= 2"
       >
-        Rotate your device for more results!.
+        Rotate your device for more results!
       </p>
 
       <p style="color: red; font-weight: bold;" v-show="result.length === 0">
