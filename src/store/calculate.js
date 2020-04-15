@@ -7,9 +7,12 @@ const calculate = (inventory, barWeight, targetWeight) => {
 
   let isFirstRun = true;
 
+  // loop through the provided array of plates
+  // the loop is required so we can try extra combinations of plates
   for (let i = 0; i < inventory.length; i++) {
     results = {};
 
+    // initialize the results array each time through the loop
     inventory.forEach(pair => {
       results[pair.weight] = 0;
     });

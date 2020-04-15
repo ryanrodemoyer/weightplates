@@ -13,7 +13,7 @@
     <div id="options" v-show="ui.showOptions">
       <ul class="list-group list-group-flush">
         <OptionRow
-          v-for="plate in options.plates"
+          v-for="plate in getPlatesForUnits"
           :key="plate.id"
           v-bind:id="plate.id"
         />
@@ -22,7 +22,7 @@
             <div class="col-3" style="margin: auto;">
               <strong>Bar</strong>
             </div>
-            <div class="col-9">
+            <div class="col-9" v-if="options.units === 'lbs'">
               <div class="form-check-inline">
                 <label class="form-check-label">
                   <input
@@ -30,7 +30,7 @@
                     class="form-check-input"
                     name="barweight"
                     value="45"
-                    v-model="ui.barWeight"
+                    v-model="ui.barWeightLbs"
                   />45
                 </label>
               </div>
@@ -41,15 +41,34 @@
                     class="form-check-input"
                     name="barweight"
                     value="35"
-                    v-model="ui.barWeight"
+                    v-model="ui.barWeightLbs"
                   />35
                 </label>
               </div>
-              <!--               
-              <select class="form-control">
-                <option selected>45</option>
-                <option>35</option>
-              </select> -->
+            </div>
+            <div class="col-9" v-if="options.units === 'kilos'">
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="barweight"
+                    value="20"
+                    v-model="ui.barWeightKilos"
+                  />20
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <label class="form-check-label">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="barweight"
+                    value="15"
+                    v-model="ui.barWeightKilos"
+                  />15
+                </label>
+              </div>
             </div>
           </div>
         </li>
@@ -60,7 +79,7 @@
 
 <script>
 import OptionRow from "@/components/OptionRow.vue";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "WeightPlates",
@@ -72,17 +91,24 @@ export default {
     return {
       ui: {
         showOptions: false,
-        barWeight: 0
+        barWeightLbs: 0,
+        barWeightKilos: 0
       }
     };
   },
   watch: {
-    "ui.barWeight": function(val) {
-      this.$store.dispatch("setBarWeight", { barWeight: parseInt(val) });
+    "ui.barWeightLbs": function(val) {
+      this.$store.dispatch("setBarWeightLbs", { barWeightLbs: parseInt(val) });
+    },
+    "ui.barWeightKilos": function(val) {
+      this.$store.dispatch("setBarWeightKilos", {
+        barWeightKilos: parseInt(val)
+      });
     }
   },
   computed: {
-    ...mapState(["options"])
+    ...mapState(["options"]),
+    ...mapGetters(["getPlatesForUnits"])
   },
   methods: {
     toggle: function() {
@@ -90,8 +116,9 @@ export default {
     }
   },
   created: function() {
-    this.ui.barWeight = this.options.barWeight;
-    this.$store.dispatch("calculate");
+    this.ui.barWeightLbs = this.options.barWeightLbs;
+    this.ui.barWeightKilos = this.options.barWeightKilos;
+    this.$store.dispatch("buildSuperSet");
   }
 };
 </script>
