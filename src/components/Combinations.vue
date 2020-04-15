@@ -18,12 +18,12 @@
           </select>
         </div>
         <div class="col-3">
-          <small>every one unit</small>
+          <small>step 1</small>
           <button
             class="btn btn-block"
             v-bind:class="{
-              'btn-success': ui.stepCount === 1,
-              'btn-outline-success': ui.stepCount !== 1
+              'btn-purple': ui.stepCount === 1,
+              'btn-outline-purple': ui.stepCount !== 1
             }"
             @click="setStep(1)"
           >
@@ -31,12 +31,12 @@
           </button>
         </div>
         <div class="col-3">
-          <small>every five units</small>
+          <small>step 5</small>
           <button
             class="btn btn-block"
             v-bind:class="{
-              'btn-success': ui.stepCount === 5,
-              'btn-outline-success': ui.stepCount !== 5
+              'btn-purple': ui.stepCount === 5,
+              'btn-outline-purple': ui.stepCount !== 5
             }"
             @click="setStep(5)"
           >
@@ -47,6 +47,13 @@
 
       <p>&nbsp;</p>
 
+      <p
+        style="color: purple; font-weight: bold;"
+        v-if="ui.isMobile && result.length >= 2"
+      >
+        Rotate your device for more results!.
+      </p>
+
       <p style="color: red; font-weight: bold;" v-show="result.length === 0">
         You need more plates!
       </p>
@@ -54,7 +61,33 @@
         <small>Results</small>
       </p>
 
-      <div class="table-responsive">
+      <div class="table-responsive" v-if="ui.isMobile === true">
+        <table class="table">
+          <tr class="center">
+            <td>Plate</td>
+            <td>Quantity</td>
+          </tr>
+          <tr
+            v-for="plate in platesFiltered"
+            :key="plate.weight"
+            v-bind:class="{
+              highlight:
+                resultOne && resultOne.items.find(r => r === plate.weight)
+            }"
+            class="center"
+          >
+            <td>{{ plate.weight }}</td>
+            <td>
+              {{
+                resultOne &&
+                  resultOne.items.filter(r => r === plate.weight).length
+              }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="table-responsive" v-if="ui.isMobile === false">
         <table class="table">
           <tr>
             <td>Plate</td>
@@ -114,7 +147,9 @@ export default {
         targetWeight: 145,
         availableWeights: [],
         showHash: false,
-        stepCount: 1
+        stepCount: 1,
+        isMobile: true,
+        innerWidth: -1
       }
     };
   },
@@ -125,6 +160,10 @@ export default {
       const res = this.sums.filter(
         x => x.sum === parseInt(this.ui.targetWeight)
       );
+      return res === undefined ? { items: [], sum: 0 } : res;
+    },
+    resultOne: function() {
+      const res = this.sums.find(x => x.sum === parseInt(this.ui.targetWeight));
       return res === undefined ? { items: [], sum: 0 } : res;
     },
     platesFiltered: function() {
@@ -149,10 +188,22 @@ export default {
           weight: i
         });
       }
+    },
+    onResize() {
+      this.ui.innerWidth = window.innerWidth;
+      this.ui.isMobile = window.innerWidth < 600;
+    }
+  },
+  beforeDestroy() {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("resize", this.onResize, { passive: true });
     }
   },
   mounted() {
     this.setStep(1);
+
+    this.onResize();
+    window.addEventListener("resize", this.onResize, { passive: true });
   }
 };
 </script>
@@ -164,5 +215,27 @@ export default {
 
 .center {
   text-align: center;
+}
+
+.btn-purple {
+  color: #fff;
+  background-color: #991399;
+  border-color: #991399;
+}
+
+.btn-purple:hover {
+  background-color: #811081;
+  border-color: #811081;
+}
+
+.btn-outline-purple {
+  color: #991399;
+  border-color: #991399;
+}
+
+.btn-outline-purple:hover {
+  color: #fff;
+  background-color: #991399;
+  border-color: #991399;
 }
 </style>
