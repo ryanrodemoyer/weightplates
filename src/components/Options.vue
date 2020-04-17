@@ -22,53 +22,10 @@
             <div class="col-3" style="margin: auto;">
               <strong>Bar</strong>
             </div>
-            <div class="col-9" v-if="options.units === 'lbs'">
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input
-                    type="radio"
-                    class="form-check-input"
-                    name="barweight"
-                    value="45"
-                    v-model="ui.barWeightLbs"
-                  />45
-                </label>
-              </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input
-                    type="radio"
-                    class="form-check-input"
-                    name="barweight"
-                    value="35"
-                    v-model="ui.barWeightLbs"
-                  />35
-                </label>
-              </div>
-            </div>
-            <div class="col-9" v-if="options.units === 'kilos'">
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input
-                    type="radio"
-                    class="form-check-input"
-                    name="barweight"
-                    value="20"
-                    v-model="ui.barWeightKilos"
-                  />20
-                </label>
-              </div>
-              <div class="form-check-inline">
-                <label class="form-check-label">
-                  <input
-                    type="radio"
-                    class="form-check-input"
-                    name="barweight"
-                    value="15"
-                    v-model="ui.barWeightKilos"
-                  />15
-                </label>
-              </div>
+            <div class="col-6 offset-3">
+              <select class="form-control" v-model="barWeight">
+                <option v-for="i in ui.barWeights" :key="i">{{ i }}</option>
+              </select>
             </div>
           </div>
         </li>
@@ -91,33 +48,33 @@ export default {
     return {
       ui: {
         showOptions: false,
-        barWeightLbs: 0,
-        barWeightKilos: 0
+        barWeights: []
       }
     };
   },
-  watch: {
-    "ui.barWeightLbs": function(val) {
-      this.$store.dispatch("setBarWeightLbs", { barWeightLbs: parseInt(val) });
-    },
-    "ui.barWeightKilos": function(val) {
-      this.$store.dispatch("setBarWeightKilos", {
-        barWeightKilos: parseInt(val)
-      });
-    }
-  },
   computed: {
     ...mapState(["options"]),
-    ...mapGetters(["getPlatesForUnits"])
+    ...mapGetters(["getPlatesForUnits"]),
+    barWeight: {
+      set(val) {
+        this.$store.dispatch("setBarWeight", { barWeight: val });
+      },
+      get() {
+        return this.options.barWeight;
+      }
+    }
   },
   methods: {
     toggle: function() {
       this.ui.showOptions = !this.ui.showOptions;
     }
   },
+  mounted: function() {
+    for (let i = 1; i <= 100; i++) {
+      this.ui.barWeights.push(i);
+    }
+  },
   created: function() {
-    this.ui.barWeightLbs = this.options.barWeightLbs;
-    this.ui.barWeightKilos = this.options.barWeightKilos;
     this.$store.dispatch("buildSuperSet");
   }
 };

@@ -1,6 +1,5 @@
 const defaultOptions = {
-  barWeightLbs: 45,
-  barWeightKilos: 20,
+  barWeight: 45,
   units: "lbs",
   plates: [
     {

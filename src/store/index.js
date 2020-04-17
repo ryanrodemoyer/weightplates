@@ -22,11 +22,8 @@ const localMutations = {
   decrement(state, args) {
     state.options.plates.find(x => x.id === args.id).quantity--;
   },
-  setBarWeightLbs(state, args) {
-    Vue.set(state.options, "barWeightLbs", args.barWeightLbs);
-  },
-  setBarWeightKilos(state, args) {
-    Vue.set(state.options, "barWeightKilos", args.barWeightKilos);
+  setBarWeight(state, args) {
+    Vue.set(state.options, "barWeight", args.barWeight);
   },
   setSums(state, args) {
     Vue.set(state, "sums", args.sums);
@@ -35,16 +32,41 @@ const localMutations = {
 
 const localActions = {
   toggleUnits(context) {
-    let units = "";
+    let newUnits = "";
     if (context.state.options.units === "lbs") {
-      units = "kilos";
+      newUnits = "kilos";
     } else {
-      units = "lbs";
+      newUnits = "lbs";
+    }
+
+    const bwi = parseInt(context.state.options.barWeight);
+    let newBarWeight = bwi;
+
+    if (newUnits === "kilos") {
+      switch (bwi) {
+        case 45:
+          newBarWeight = 20;
+          break;
+        case 35:
+          newBarWeight = 15;
+          break;
+      }
+    } else {
+      switch (bwi) {
+        case 20:
+          newBarWeight = 45;
+          break;
+        case 15:
+          newBarWeight = 35;
+          break;
+      }
     }
 
     context.commit("setUnits", {
-      units: units
+      units: newUnits
     });
+
+    context.commit("setBarWeight", { barWeight: newBarWeight });
 
     context.dispatch("buildSuperSet");
   },
@@ -58,13 +80,8 @@ const localActions = {
 
     context.dispatch("buildSuperSet");
   },
-  setBarWeightLbs(context, args) {
-    context.commit("setBarWeightLbs", args);
-
-    context.dispatch("buildSuperSet");
-  },
-  setBarWeightKilos(context, args) {
-    context.commit("setBarWeightKilos", args);
+  setBarWeight(context, args) {
+    context.commit("setBarWeight", args);
 
     context.dispatch("buildSuperSet");
   },
@@ -84,12 +101,7 @@ const localActions = {
     );
     const list = build(initial);
     const set = powerSet(list);
-    const sum = sums(
-      set,
-      context.state.options.units === "lbs"
-        ? context.state.options.barWeightLbs
-        : context.state.options.barWeightKilos
-    );
+    const sum = sums(set, context.state.options.barWeight);
 
     context.commit("setSums", {
       sums: sum
@@ -100,9 +112,6 @@ const localActions = {
 export default new Vuex.Store({
   state: localState,
   getters: {
-    dupes: state => {
-      return state.sums.filter(x => x.hash === "290.4738");
-    },
     getPlatesForUnits: state => {
       return state.options.plates.filter(x => x.units === state.options.units);
     },
