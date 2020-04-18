@@ -52,14 +52,16 @@
       <ul class="list-group list-group-flush">
         <li
           class="list-group-item"
-          v-for="plate in platesFiltered"
+          v-for="(plate, i) in platesFiltered"
           :key="plate.weight"
         >
           <div class="row">
             <div class="col-4">
               <button
                 class="btn btn-block btn-lavender"
-                @click="add({ which: 'left', weight: plate.weight })"
+                @click="
+                  add({ which: 'left', weight: plate.weight, position: i + 1 })
+                "
               >
                 {{ plate.weight }}
               </button>
@@ -68,7 +70,9 @@
             <div class="col-4">
               <button
                 class="btn btn-block btn-purple"
-                @click="add({ which: 'pair', weight: plate.weight })"
+                @click="
+                  add({ which: 'pair', weight: plate.weight, position: i + 1 })
+                "
               >
                 {{ plate.weight }}
               </button>
@@ -77,7 +81,9 @@
             <div class="col-4">
               <button
                 class="btn btn-block btn-lavender"
-                @click="add({ which: 'right', weight: plate.weight })"
+                @click="
+                  add({ which: 'right', weight: plate.weight, position: i + 1 })
+                "
               >
                 {{ plate.weight }}
               </button>
@@ -123,7 +129,7 @@ export default {
       return res === undefined ? {} : res;
     },
     processActions: function() {
-      let total = this.options.barWeight;
+      let total = parseInt(this.options.barWeight);
 
       this.ui.actions.forEach(x => {
         switch (x.which) {
@@ -145,14 +151,14 @@ export default {
       this.ui.actions.forEach(x => {
         switch (x.which) {
           case "pair":
-            left.push(x.weight);
-            right.push(x.weight);
+            left.push({ weight: x.weight, position: x.position });
+            right.push({ weight: x.weight, position: x.position });
             break;
           case "left":
-            left.push(x.weight);
+            left.push({ weight: x.weight, position: x.position });
             break;
           case "right":
-            right.push(x.weight);
+            right.push({ weight: x.weight, position: x.position });
             break;
         }
       });
@@ -168,18 +174,21 @@ export default {
       }
       left.reverse().forEach(x =>
         cells.push({
-          weight: x,
-          isBar: false
+          weight: x.weight,
+          isBar: false,
+          position: x.position
         })
       );
       cells.push({
         weight: this.options.barWeight,
-        isBar: true
+        isBar: true,
+        position: -1
       });
       right.forEach(x =>
         cells.push({
-          weight: x,
-          isBar: false
+          weight: x.weight,
+          isBar: false,
+          position: x.position
         })
       );
       if (left.length > right.length) {
@@ -190,6 +199,13 @@ export default {
           });
         }
       }
+
+      // cells.forEach(x => {
+      //   const ems = 4 / x.position;
+      //   x["style"] = {
+      //     "font-size": x.isBar ? 1 : ems + "em"
+      //   };
+      // });
       return cells;
     }
   },
@@ -225,4 +241,9 @@ export default {
 .white {
   color: #ffffff;
 }
+
+// td {
+//   margin: 0;
+//   padding: 0;
+// }
 </style>
