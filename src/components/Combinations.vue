@@ -209,6 +209,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+$purple: #663399;
+
 .highlight {
   background-color: lavender;
 }
@@ -219,23 +221,23 @@ export default {
 
 .btn-purple {
   color: #fff;
-  background-color: #991399;
-  border-color: #991399;
+  background-color: $purple;
+  border-color: $purple;
 }
 
 .btn-purple:hover {
-  background-color: #811081;
-  border-color: #811081;
+  background-color: darken($color: $purple, $amount: 5);
+  border-color: darken($color: $purple, $amount: 5);
 }
 
 .btn-outline-purple {
-  color: #991399;
-  border-color: #991399;
+  color: $purple;
+  border-color: $purple;
 }
 
 .btn-outline-purple:hover {
   color: #fff;
-  background-color: #991399;
-  border-color: #991399;
+  background-color: $purple;
+  border-color: $purple;
 }
 </style>

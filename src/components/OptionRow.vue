@@ -8,11 +8,13 @@
         <span>{{ getOptionById(this.id).quantity }}</span>
       </div>
       <div class="col-3">
-        <button class="btn btn-info btn-block" @click="increment()">inc</button>
+        <button class="btn btn-lavender btn-block" @click="increment()">
+          inc
+        </button>
       </div>
       <div class="col-3">
         <button
-          class="btn btn-warning btn-block"
+          class="btn btn-lightblue btn-block"
           @click="decrement()"
           :disabled="getOptionById(this.id).quantity === 0"
         >
@@ -54,4 +56,34 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+$darkamount: 2;
+$darklavender: darken(
+  $color: lavender,
+  $amount: $darkamount
+);
+$darklightblue: darken(
+  $color: lightblue,
+  $amount: $darkamount
+);
+
+.btn-lavender {
+  background-color: lavender;
+  border-color: $darklavender;
+}
+
+.btn-lavender:hover {
+  background-color: $darklavender;
+  border-color: $darklavender;
+}
+
+.btn-lightblue {
+  background-color: lightblue;
+  border-color: $darklightblue;
+}
+
+.btn-lightblue:hover {
+  background-color: $darklightblue;
+  border-color: $darklightblue;
+}
+</style>

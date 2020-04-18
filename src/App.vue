@@ -9,6 +9,8 @@
 </template>
 
 <style lang="scss">
+$purple: #663399;
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,7 +28,7 @@
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: $purple;
     }
   }
 }
