@@ -6,7 +6,7 @@
 
     <div class="row">
       <div class="col-sm">
-        <Options />
+        <BarBuilderOptions />
       </div>
     </div>
 
@@ -33,12 +33,15 @@
 
 <script>
 import { mapState } from "vuex";
-import Options from "@/components/Options.vue";
 import BarBuilderResults from "@/components/BarBuilderResults.vue";
+import BarBuilderOptions from "@/components/BarBuilderOptions.vue";
 
 export default {
   name: "BarBuilder",
-  components: { Options, BarBuilderResults },
+  components: {
+    BarBuilderOptions,
+    BarBuilderResults
+  },
   props: {},
   data: function() {
     return {};

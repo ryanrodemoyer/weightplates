@@ -109,6 +109,80 @@ const localActions = {
   }
 };
 
+const modBarBuilder = {
+  namespaced: true,
+  state: {
+    options: {
+      barWeight: 45,
+      units: "lbs",
+      groupNames: ["lbs", "kilos"],
+      groups: [
+        {
+          name: "lbs",
+          plates: [55, 45, 35, 25, 15, 10, 5, 2.5, 1]
+        },
+        { name: "kilos", plates: [25, 20, 15, 10, 5, 2.5, 2, 1.5, 1, 0.5] }
+      ]
+    }
+  },
+  mutations: {
+    setBarWeight(state, args) {
+      Vue.set(state.options, "barWeight", parseInt(args.barWeight));
+    },
+    setUnits(state, args) {
+      Vue.set(state.options, "units", args.units);
+    }
+  },
+  actions: {
+    setBarWeight(context, args) {
+      context.commit("setBarWeight", args);
+    },
+    toggleUnits(context) {
+      let newUnits = "";
+      if (context.state.options.units === "lbs") {
+        newUnits = "kilos";
+      } else {
+        newUnits = "lbs";
+      }
+
+      const bwi = parseInt(context.state.options.barWeight);
+      let newBarWeight = bwi;
+
+      if (newUnits === "kilos") {
+        switch (bwi) {
+          case 45:
+            newBarWeight = 20;
+            break;
+          case 35:
+            newBarWeight = 15;
+            break;
+        }
+      } else {
+        switch (bwi) {
+          case 20:
+            newBarWeight = 45;
+            break;
+          case 15:
+            newBarWeight = 35;
+            break;
+        }
+      }
+
+      context.commit("setUnits", {
+        units: newUnits
+      });
+
+      context.commit("setBarWeight", { barWeight: newBarWeight });
+    }
+  },
+  getters: {
+    getWeightsForUnits: state => {
+      return state.options.groups.find(x => x.name === state.options.units)
+        .plates;
+    }
+  }
+};
+
 export default new Vuex.Store({
   state: localState,
   getters: {
@@ -124,5 +198,5 @@ export default new Vuex.Store({
   },
   mutations: localMutations,
   actions: localActions,
-  modules: {}
+  modules: { modBarBuilder: modBarBuilder }
 });

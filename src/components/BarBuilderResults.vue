@@ -1,15 +1,15 @@
 <template>
   <div class="card">
     <div class="card-header">
-      Results
+      Bar Builder
       <button class="float-right" @click="toggleUnits()">
-        Show me {{ options.units === "lbs" ? "Kilos" : "Lbs" }}
+        Show me {{ modBarBuilder.options.units === "lbs" ? "Kilos" : "Lbs" }}
       </button>
     </div>
     <div class="card-body">
       <div class="row center">
         <div class="col">
-          <small>{{ this.options.units }}</small>
+          <small>{{ this.modBarBuilder.options.units }}</small>
           <p style="font-size: 3em">{{ this.processActions }}</p>
         </div>
       </div>
@@ -17,7 +17,6 @@
         <div class="table-responsive">
           <table class="table">
             <tr>
-              <!-- <td class="center">{{ this.options.barWeight }}</td> -->
               <td class="center" v-for="(cell, i) in buildCells" :key="i">
                 <span v-bind:class="{ white: cell.weight === -1 }">{{
                   cell.weight
@@ -36,6 +35,8 @@
         </div>
       </div>
       <p>&nbsp;</p>
+      <BarBuilderBar />
+      <p>&nbsp;</p>
       <div class="row center">
         <div class="col-4">
           + left
@@ -52,29 +53,25 @@
       <ul class="list-group list-group-flush">
         <li
           class="list-group-item"
-          v-for="(plate, i) in platesFiltered"
-          :key="plate.weight"
+          v-for="(weight, i) in getWeightsForUnits"
+          :key="i"
         >
           <div class="row">
             <div class="col-4">
               <button
                 class="btn btn-block btn-lavender"
-                @click="
-                  add({ which: 'left', weight: plate.weight, position: i + 1 })
-                "
+                @click="add({ which: 'left', weight: weight, position: i + 1 })"
               >
-                {{ plate.weight }}
+                {{ weight }}
               </button>
             </div>
 
             <div class="col-4">
               <button
                 class="btn btn-block btn-purple"
-                @click="
-                  add({ which: 'pair', weight: plate.weight, position: i + 1 })
-                "
+                @click="add({ which: 'pair', weight: weight, position: i + 1 })"
               >
-                {{ plate.weight }}
+                {{ weight }}
               </button>
             </div>
 
@@ -82,38 +79,31 @@
               <button
                 class="btn btn-block btn-lavender"
                 @click="
-                  add({ which: 'right', weight: plate.weight, position: i + 1 })
+                  add({ which: 'right', weight: weight, position: i + 1 })
                 "
               >
-                {{ plate.weight }}
+                {{ weight }}
               </button>
             </div>
           </div>
         </li>
       </ul>
-
-      <!-- <div class="card">
-            <div class="card-header">Debug</div>
-
-            <strong>$data</strong>
-            <pre style="margin: 1em;">{{ $data }}</pre>
-
-            <strong>result (computed)</strong>
-            <pre style="margin: 1em;">{{ result }}</pre>
-          </div> -->
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import BarBuilderBar from "@/components/BarBuilderBar.vue";
 
 export default {
   name: "BarBuilderResults",
+  components: { BarBuilderBar },
   props: {},
   data: function() {
     return {
       ui: {
+        barWeights: [],
         stepCount: 1,
         isMobile: true,
         innerWidth: -1,
@@ -122,14 +112,20 @@ export default {
     };
   },
   computed: {
-    ...mapState(["options"]),
-    ...mapGetters(["getPlatesForUnits"]),
-    platesFiltered: function() {
-      const res = this.getPlatesForUnits.filter(x => x.quantity >= 1);
-      return res === undefined ? {} : res;
+    ...mapState(["modBarBuilder"], {
+      options: state => state.options
+    }),
+    ...mapGetters("modBarBuilder", ["getWeightsForUnits"]),
+    barWeight: {
+      set(val) {
+        this.$store.dispatch("modBarBuilder/setBarWeight", { barWeight: val });
+      },
+      get() {
+        return this.modBarBuilder.options.barWeight;
+      }
     },
     processActions: function() {
-      let total = parseInt(this.options.barWeight);
+      let total = parseInt(this.modBarBuilder.options.barWeight);
 
       this.ui.actions.forEach(x => {
         switch (x.which) {
@@ -180,7 +176,7 @@ export default {
         })
       );
       cells.push({
-        weight: this.options.barWeight,
+        weight: this.modBarBuilder.options.barWeight,
         isBar: true,
         position: -1
       });
@@ -212,7 +208,7 @@ export default {
   getters: {},
   methods: {
     toggleUnits() {
-      this.$store.dispatch("toggleUnits");
+      this.$store.dispatch("modBarBuilder/toggleUnits");
     },
     add(args) {
       this.ui.actions.push(args);
@@ -241,9 +237,4 @@ export default {
 .white {
   color: #ffffff;
 }
-
-// td {
-//   margin: 0;
-//   padding: 0;
-// }
 </style>
