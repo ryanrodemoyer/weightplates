@@ -30,7 +30,7 @@
       </div>
       <div class="row">
         <div class="col">
-          <button class="btn btn-warning btn-block" @click="reset()">
+          <button class="btn btn-lightblue btn-block" @click="reset()">
             reset
           </button>
         </div>
@@ -58,7 +58,7 @@
           <div class="row">
             <div class="col-4">
               <button
-                class="btn btn-block btn-success"
+                class="btn btn-block btn-lavender"
                 @click="add({ which: 'left', weight: plate.weight })"
               >
                 {{ plate.weight }}
@@ -67,7 +67,7 @@
 
             <div class="col-4">
               <button
-                class="btn btn-block btn-success"
+                class="btn btn-block btn-purple"
                 @click="add({ which: 'pair', weight: plate.weight })"
               >
                 {{ plate.weight }}
@@ -76,7 +76,7 @@
 
             <div class="col-4">
               <button
-                class="btn btn-block btn-success"
+                class="btn btn-block btn-lavender"
                 @click="add({ which: 'right', weight: plate.weight })"
               >
                 {{ plate.weight }}
@@ -222,38 +222,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$purple: #663399;
-
 .white {
   color: #ffffff;
-}
-.highlight {
-  background-color: lavender;
-}
-
-.center {
-  text-align: center;
-}
-
-.btn-purple {
-  color: #fff;
-  background-color: $purple;
-  border-color: $purple;
-}
-
-.btn-purple:hover {
-  background-color: darken($color: $purple, $amount: 5);
-  border-color: darken($color: $purple, $amount: 5);
-}
-
-.btn-outline-purple {
-  color: $purple;
-  border-color: $purple;
-}
-
-.btn-outline-purple:hover {
-  color: #fff;
-  background-color: $purple;
-  border-color: $purple;
 }
 </style>
