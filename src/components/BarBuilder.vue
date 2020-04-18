@@ -4,8 +4,9 @@
       <h1>Bar Builder</h1>
     </div>
 
-    <!-- <div class="row">
+    <div class="row">
       <div class="col-sm">
+        <Options />
       </div>
     </div>
 
@@ -13,10 +14,11 @@
 
     <div class="row">
       <div class="col-sm">
+        <BarBuilderResults />
       </div>
     </div>
 
-    <p>&nbsp;</p> -->
+    <p>&nbsp;</p>
 
     <!-- <div class="row">
       <div class="col-sm">
@@ -31,10 +33,12 @@
 
 <script>
 import { mapState } from "vuex";
+import Options from "@/components/Options.vue";
+import BarBuilderResults from "@/components/BarBuilderResults.vue";
 
 export default {
   name: "BarBuilder",
-  components: {},
+  components: { Options, BarBuilderResults },
   props: {},
   data: function() {
     return {};
