@@ -56,34 +56,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-$darkamount: 2;
-$darklavender: darken(
-  $color: lavender,
-  $amount: $darkamount
-);
-$darklightblue: darken(
-  $color: lightblue,
-  $amount: $darkamount
-);
-
-.btn-lavender {
-  background-color: lavender;
-  border-color: $darklavender;
-}
-
-.btn-lavender:hover {
-  background-color: $darklavender;
-  border-color: $darklavender;
-}
-
-.btn-lightblue {
-  background-color: lightblue;
-  border-color: $darklightblue;
-}
-
-.btn-lightblue:hover {
-  background-color: $darklightblue;
-  border-color: $darklightblue;
-}
-</style>
+<style scoped lang="scss"></style>

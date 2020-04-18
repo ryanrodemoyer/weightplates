@@ -25,6 +25,11 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script>
+      // Only load on production environment.
+      if (window.location.host !== "weightplates.netlify.app")
+        window.goatcounter = { no_onload: true };
+    </script>
     <script
       data-goatcounter="https://weightplates.goatcounter.com/count"
       async
