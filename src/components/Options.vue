@@ -12,6 +12,19 @@
 
     <div id="options" v-show="ui.showOptions">
       <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col center">
+              <button
+                class="btn btn-purple btn-block"
+                @click="resetToDefaults()"
+              >
+                Reset to Defaults
+              </button>
+              <small>settings are stored directly on this device</small>
+            </div>
+          </div>
+        </li>
         <OptionRow
           v-for="plate in getPlatesForUnits"
           :key="plate.id"
@@ -67,6 +80,9 @@ export default {
   methods: {
     toggle: function() {
       this.ui.showOptions = !this.ui.showOptions;
+    },
+    resetToDefaults() {
+      this.$store.dispatch("resetToDefaults");
     }
   },
   mounted: function() {

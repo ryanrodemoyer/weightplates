@@ -22,8 +22,8 @@
           <button
             class="btn btn-block"
             v-bind:class="{
-              'btn-purple': ui.stepCount === 1,
-              'btn-outline-purple': ui.stepCount !== 1
+              'btn-purple': this.stepCount === 1,
+              'btn-outline-purple': this.stepCount !== 1
             }"
             @click="setStep(1)"
           >
@@ -35,8 +35,8 @@
           <button
             class="btn btn-block"
             v-bind:class="{
-              'btn-purple': ui.stepCount === 5,
-              'btn-outline-purple': ui.stepCount !== 5
+              'btn-purple': this.stepCount === 5,
+              'btn-outline-purple': this.stepCount !== 5
             }"
             @click="setStep(5)"
           >
@@ -147,7 +147,6 @@ export default {
         targetWeight: 145,
         availableWeights: [],
         showHash: false,
-        stepCount: 1,
         isMobile: true,
         innerWidth: -1
       }
@@ -156,6 +155,11 @@ export default {
   computed: {
     ...mapState(["options", "sums"]),
     ...mapGetters(["getResultByWeight", "getPlatesForUnits"]),
+    stepCount: {
+      get() {
+        return this.options.stepCount;
+      }
+    },
     result: function() {
       const res = this.sums.filter(
         x => x.sum === parseInt(this.ui.targetWeight)
@@ -171,19 +175,21 @@ export default {
       return res === undefined ? {} : res;
     }
   },
-  getters: {},
   methods: {
     toggleUnits() {
       this.$store.dispatch("toggleUnits");
     },
     setStep(value) {
-      const step = value || this.ui.stepCount;
+      const step = value || this.stepCount;
 
-      this.ui.stepCount = step;
+      this.$store.dispatch("setStepCount", { stepCount: step });
 
+      this.buildAvailableWeights(step);
+    },
+    buildAvailableWeights() {
       this.ui.availableWeights = [];
 
-      for (let i = 15; i <= 675; i += step) {
+      for (let i = 15; i <= 675; i += this.stepCount) {
         this.ui.availableWeights.push({
           weight: i
         });
@@ -200,7 +206,7 @@ export default {
     }
   },
   mounted() {
-    this.setStep(1);
+    this.buildAvailableWeights();
 
     this.onResize();
     window.addEventListener("resize", this.onResize, { passive: true });
