@@ -7,23 +7,43 @@ import defaultOptions from "./defaultOptions.js";
 
 Vue.use(Vuex);
 
+// retrieve this key from localStorage
+// if the key exists, use the data to seed Vuex
+// if the key dne, use `defaultOptions` for Vuex
+const lsOptions = localStorage.getItem("weightPlates.options");
+
 const localState = {
-  options: defaultOptions,
+  options: lsOptions ? JSON.parse(lsOptions) : defaultOptions,
   sums: []
 };
 
 const localMutations = {
-  setUnits(state, args) {
-    Vue.set(state.options, "units", args.units);
+  resetToDefaults(state) {
+    Vue.set(state, "options", defaultOptions);
+    localStorage.removeItem(
+      "weightPlates.options",
+      JSON.stringify(state.options)
+    );
   },
-  increment(state, args) {
-    state.options.plates.find(x => x.id === args.id).quantity++;
-  },
-  decrement(state, args) {
-    state.options.plates.find(x => x.id === args.id).quantity--;
+  setStepCount(state, args) {
+    Vue.set(state.options, "stepCount", args.stepCount);
+    localStorage.setItem("weightPlates.options", JSON.stringify(state.options));
   },
   setBarWeight(state, args) {
     Vue.set(state.options, "barWeight", args.barWeight);
+    localStorage.setItem("weightPlates.options", JSON.stringify(state.options));
+  },
+  setUnits(state, args) {
+    Vue.set(state.options, "units", args.units);
+    localStorage.setItem("weightPlates.options", JSON.stringify(state.options));
+  },
+  increment(state, args) {
+    state.options.plates.find(x => x.id === args.id).quantity++;
+    localStorage.setItem("weightPlates.options", JSON.stringify(state.options));
+  },
+  decrement(state, args) {
+    state.options.plates.find(x => x.id === args.id).quantity--;
+    localStorage.setItem("weightPlates.options", JSON.stringify(state.options));
   },
   setSums(state, args) {
     Vue.set(state, "sums", args.sums);
@@ -79,6 +99,14 @@ const localActions = {
     context.commit("decrement", args);
 
     context.dispatch("buildSuperSet");
+  },
+  resetToDefaults(context) {
+    context.commit("resetToDefaults");
+
+    context.dispatch("buildSuperSet");
+  },
+  setStepCount(context, args) {
+    context.commit("setStepCount", args);
   },
   setBarWeight(context, args) {
     context.commit("setBarWeight", args);

@@ -1,6 +1,7 @@
 const defaultOptions = {
   barWeight: 45,
   units: "lbs",
+  stepCount: 1,
   plates: [
     {
       id: 1,
